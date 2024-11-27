@@ -1,0 +1,109 @@
+{% extends 'app/base.html' %}
+{% block contenido %}
+{% load crispy_forms_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Detalle de la Reserva | Hotel Le Belle Mar</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="{% static 'app/css/accounts.css' %}" />
+</head>
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12 d-flex">
+                    <!-- Sección de Bienvenida con Imagen de Fondo -->
+                    <section id="" class="text-wrap p-4 p-lg-5 d-flex hero text w-50" data-aos="fade-up" data-aos-delay="100">
+                        <img src="{% static 'app/img/bg_login.jpg'%}" alt="" data-aos="fade-in" class="text w-100" style="height: 100%;">
+                        <div class="container text w-100" data-aos="fade-up" data-aos-delay="100">
+                            <p>Consulta los detalles de tu reserva en Hotel Le Belle Mar y disfruta de tu estancia.</p>
+                        </div>
+                    </section>
+                    <!-- Sección de Detalles de la Reserva -->
+                    <div class="login-wrap p-4 p-md-5 w-50" data-aos="fade-up" data-aos-delay="100">
+                        <div class="row justify-content-center py-md-5">
+                            <div class="col-lg-12">
+                                <h2 class="text-center mb-4">Detalle de la Reserva</h2>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <div class="col-sm-4"><strong>ID Reserva:</strong></div>
+                                            <div class="col-sm-8">{{ reserva.reserva_id }}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-4"><strong>Habitación:</strong></div>
+                                            <div class="col-sm-8">{{ reserva.habitacion.num_hab }} - {{ reserva.habitacion.tipo_hab }}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-4"><strong>Fecha de Entrada:</strong></div>
+                                            <div class="col-sm-8">{{ reserva.fecha_entrada|date:"d M Y" }}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-4"><strong>Fecha de Salida:</strong></div>
+                                            <div class="col-sm-8">{{ reserva.fecha_salida|date:"d M Y" }}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-4"><strong>Precio Total:</strong></div>
+                                            <div class="col-sm-8">{{ reserva.precio_final|clp }} CLP</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-4"><strong>Total Días:</strong></div>
+                                            <div class="col-sm-8">{{ reserva.total_dias }}</div>
+                                        </div>
+                                        <div class="row mt-4 text-center">
+                                            <button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#confirmarEntregaModal">
+                                                Confirmar Entrega
+                                            </button>
+                                            <!-- Modal de Confirmación -->
+                                            <div class="modal fade" id="confirmarEntregaModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="modalLabel">Confirmar Entrega de la Habitación</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            ¿Estás seguro de confirmar la entrega de la habitación?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <form method="post" action="{% url 'confirmar_entrega' reserva_id=reserva.reserva_id %}">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-success">Sí</button>
+                                                            </form>
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-4 text-center">
+                                            <div class="col-sm-12">
+                                                <a href="{% url 'my_room' %}" class="btn btn-secondary">Volver a mis reservas</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Fin Sección de Detalles de la Reserva -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+{% endblock %}

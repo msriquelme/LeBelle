@@ -1,0 +1,89 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block contenido %}
+<div class="container" style="max-width: 1200px; margin: auto; padding: 20px 15px;">
+  <h3 class="text-center mb-4">Información de la Habitación</h3>
+  <div class="row gy-4">
+    <!-- Sección de Imágenes -->
+    <div class="col-lg-7">
+      <div class="portfolio-details-slider swiper init-swiper">
+        <script type="application/json" class="swiper-config">
+          {
+            "loop": true,
+            "speed": 600,
+            "autoplay": {
+              "delay": 5000
+            },
+            "slidesPerView": "auto",
+            "pagination": {
+              "el": ".swiper-pagination",
+              "type": "bullets",
+              "clickable": true
+            }
+          }
+        </script>
+        <div class="swiper-wrapper align-items-center">
+          {% if habitacion.imagenes.exists %}
+            {% for imagen in habitacion.imagenes.all %}
+              <div class="swiper-slide">
+                <img src="{{ imagen.imagen.url }}" alt="Imagen de {{ habitacion.num_hab }}" class="d-block w-100 rounded" style="max-height: 400px; object-fit: cover;">
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="swiper-slide">
+              <img src="{% static 'app/img/default.jpg' %}" alt="Imagen predeterminada" class="d-block w-100 rounded" style="max-height: 400px; object-fit: cover;">
+            </div>
+          {% endif %}
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </div>
+
+    <!-- Información de la Habitación -->
+    <div class="col-lg-5">
+      <div class="portfolio-info bg-light p-4 rounded shadow">
+        <ul class="list-unstyled">
+          <li><strong>Número:</strong> {{ habitacion.num_hab }}</li>
+          <li><strong>Tipo:</strong> {{ habitacion.tipo_hab }}</li>
+          <li><strong>Nombre:</strong> {{ habitacion.nombre }}</li>
+          <li><strong>Descripción:</strong> {{ habitacion.descripcion }}</li>
+          <li><strong>Disponibilidad:</strong> {{ habitacion.disponible }}</li>
+        </ul>
+        <form method="post" action="{% url 'habitacion_detalle' habitacion_id=habitacion.habitacion_id %}">
+          {% csrf_token %}
+          {% include 'app/calendar.html' %}
+          <div id="totalAPagar" class="alert alert-info mt-3">
+            Total a Pagar: <span id="precioCalculado"></span> CLP
+          </div>
+          <input type="hidden" name="total" id="total"> <!-- Input oculto para enviar el total calculado -->
+          <button type="submit" class="btn btn-success btn-block">Proceder al Pago</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Descripción y Precio -->
+  <div class="portfolio-description bg-white rounded shadow p-4 mt-4">
+    <h4>Precio por Noche: {{ habitacion.precio_noche }}</h4>
+    <p>El precio por noche para la habitación {{ habitacion.num_hab }} es {{ habitacion.precio_noche }}. Aprovecha nuestra oferta especial y reserva tu estancia ahora para disfrutar de una experiencia inolvidable en nuestro hotel.</p>
+  </div>
+
+  <!-- Sección de Opiniones -->
+  <div class="mt-5">
+    <h4>Comentarios de Clientes</h4>
+    <div class="bg-light rounded shadow p-4">
+      {% for opinion in habitacion.opiniones.all %}
+        <div class="comment mb-4 p-3 border-bottom">
+          <p><strong>Usuario:</strong> {{ opinion.cliente.username }}</p>
+          <p><strong>Calificación:</strong> {{ opinion.calificacion }}/10</p>
+          <p><strong>Comentario:</strong> {{ opinion.comentario }}</p>
+          <p><small>Fecha: {{ opinion.fecha_opinion|date:"d M Y" }}</small></p>
+        </div>
+      {% empty %}
+        <p>No hay comentarios disponibles para esta habitación.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
