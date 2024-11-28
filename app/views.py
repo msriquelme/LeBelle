@@ -274,17 +274,29 @@ def confirmar_entrega(request, reserva_id):
 
 @login_required
 def opinion_form(request, reserva_id):
+    # Obtiene la reserva específica asociada al usuario autenticado
     reserva = get_object_or_404(Reserva, reserva_id=reserva_id, cliente=request.user)
+
     if request.method == 'POST':
         calificacion = request.POST.get('calificacion')
         comentario = request.POST.get('comentario')
+
+        # Obtiene la habitación asociada a la reserva
+        habitacion = reserva.habitacion
+
+        # Crea la opinión incluyendo la habitación
         Opinion.objects.create(
             reserva=reserva,
+            habitacion=habitacion,
             cliente=request.user,
             calificacion=calificacion,
             comentario=comentario
         )
-        return redirect('my_room')
+
+        # Redirige al usuario a una página (puede ser una página de confirmación)
+        return redirect('index')
+
+    # Renderiza el formulario con información de la reserva
     return render(request, 'profile/opinion_form.html', {'reserva': reserva})
 #####################################
 # / / / / / / / / / / / / / / / / / #
